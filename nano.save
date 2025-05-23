@@ -1,0 +1,25 @@
+sudo apt update
+sudo apt install htop nmon -y
+#!/bin/bash
+df -h > /var/log/disk_usage.log
+du -sh /home/* >> /var/log/disk_usage.log
+sudo chmod +x /etc/cron.daily/disk_usage_log
+#!/bin/bash
+TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
+{
+  echo "===== Metrics at $TIMESTAMP ====="
+  top -b -n1 | head -20
+  df -h
+  ps aux --sort=-%mem | head -10
+  echo "==============================="
+} >> /var/log/system_metrics.log
+sudo chmod +x /usr/local/bin/log_system_metrics.sh
+crontab -e
+0 * * * * /usr/local/bin/log_system_metrics.sh
+/var/log/system_metrics.log {
+    daily
+    rotate 7
+    compress
+    missingok
+    notifempty
+}
