@@ -1,0 +1,42 @@
+sudo mkdir -p /backups/sarah /backups/mike
+sudo chown sarah:sarah /backups/sarah
+sudo chown mike:mike /backups/mike
+chmod 700 /backups/sarah /backups/mike
+#!/bin/bash
+TIMESTAMP=$(date +'%Y-%m-%d_%H-%M')
+tar -czf /backups/sarah/sarah_site_$TIMESTAMP.tar.gz /var/www/sarah_site
+echo "$TIMESTAMP : Backup created." >> /var/log/sarah_backup.log
+#!/bin/bash
+TIMESTAMP=$(date +'%Y-%m-%d_%H-%M')
+tar -czf /backups/mike/mike_site_$TIMESTAMP.tar.gz /var/www/mike_site
+echo "$TIMESTAMP : Backup created." >> /var/log/mike_backup.log
+chmod +x /home/sarah/backup_sarah.sh
+chmod +x /home/mike/backup_mike.sh
+sudo crontab -u sarah -e
+0 2 * * * /home/sarah/backup_sarah.sh
+sudo crontab -u mike -e
+30 2 * * * /home/mike/backup_mike.sh
+sudo crontab -u sarah -e
+0 2 * * * /home/sarah/backup_sarah.sh
+sudo crontab -u mike -e
+30 2 * * * /home/mike/backup_mike.sh
+sudo nano /etc/logrotate.d/sarah_backup
+/var/log/sarah_backup.log {
+    daily
+    rotate 7
+    compress
+    missingok
+    notifempty
+}
+sudo nano /etc/logrotate.d/mike_backup
+/var/log/mike_backup.log {
+    daily
+    rotate 7
+    compress
+    missingok
+    notifempty
+}
+sudo nano /home/devops_setup_complete.md
+cat > /home/devops_setup_complete.md <<EOF
+[Paste the full guide above here]
+EOF
