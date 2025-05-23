@@ -1,0 +1,16 @@
+sudo adduser sarah
+sudo adduser mike
+sudo chmod 700 /home/sarah
+sudo chmod 700 /home/mike
+sudo apt install libpam-pwquality -y
+minlen = 12
+dcredit = -1
+ucredit = -1
+lcredit = -1
+ocredit = -1
+retry = 3
+PASS_MAX_DAYS   90
+PASS_MIN_DAYS   7
+PASS_WARN_AGE   14
+sudo chage --maxdays 90 --mindays 7 --warndays 14 sarah
+sudo chage --maxdays 90 --mindays 7 --warndays 14 mike
